@@ -298,26 +298,6 @@ class WatsonXInferenceAdapter(Inference, ModelRegistryHelper):
         guided_choice: Optional[List[str]] = None,
         prompt_logprobs: Optional[int] = None,
     ) -> OpenAICompletion:
-        model_obj = await self.model_store.get_model(model)
-        params = await prepare_openai_completion_params(
-            model=model_obj.provider_resource_id,
-            prompt=prompt,
-            best_of=best_of,
-            echo=echo,
-            frequency_penalty=frequency_penalty,
-            logit_bias=logit_bias,
-            logprobs=logprobs,
-            max_tokens=max_tokens,
-            n=n,
-            presence_penalty=presence_penalty,
-            seed=seed,
-            stop=stop,
-            stream=stream,
-            stream_options=stream_options,
-            temperature=temperature,
-            top_p=top_p,
-            user=user,
-        )
         raise NotImplementedError("openai completion is not supported for watsonx")
 
     async def openai_chat_completion(
@@ -347,4 +327,3 @@ class WatsonXInferenceAdapter(Inference, ModelRegistryHelper):
         user: Optional[str] = None,
     ) -> Union[OpenAIChatCompletion, AsyncIterator[OpenAIChatCompletionChunk]]:
         raise NotImplementedError("openai chat completion is not supported for watsonx")
-
