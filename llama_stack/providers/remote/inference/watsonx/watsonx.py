@@ -274,7 +274,7 @@ class WatsonXInferenceAdapter(Inference, ModelRegistryHelper):
         output_dimension: Optional[int] = None,
         task_type: Optional[EmbeddingTaskType] = None,
     ) -> EmbeddingsResponse:
-        pass
+        raise NotImplementedError("embedding is not supported for watsonx")
 
     async def openai_completion(
         self,
@@ -318,7 +318,7 @@ class WatsonXInferenceAdapter(Inference, ModelRegistryHelper):
             top_p=top_p,
             user=user,
         )
-        return await self._get_openai_client().completions.create(**params)  # type: ignore
+        raise NotImplementedError("openai completion is not supported for watsonx")
 
     async def openai_chat_completion(
         self,
@@ -346,50 +346,5 @@ class WatsonXInferenceAdapter(Inference, ModelRegistryHelper):
         top_p: Optional[float] = None,
         user: Optional[str] = None,
     ) -> Union[OpenAIChatCompletion, AsyncIterator[OpenAIChatCompletionChunk]]:
-        model_obj = await self.model_store.get_model(model)
-        params = await prepare_openai_completion_params(
-            model=model_obj.provider_resource_id,
-            messages=messages,
-            frequency_penalty=frequency_penalty,
-            function_call=function_call,
-            functions=functions,
-            logit_bias=logit_bias,
-            logprobs=logprobs,
-            max_completion_tokens=max_completion_tokens,
-            max_tokens=max_tokens,
-            n=n,
-            parallel_tool_calls=parallel_tool_calls,
-            presence_penalty=presence_penalty,
-            response_format=response_format,
-            seed=seed,
-            stop=stop,
-            stream=stream,
-            stream_options=stream_options,
-            temperature=temperature,
-            tool_choice=tool_choice,
-            tools=tools,
-            top_logprobs=top_logprobs,
-            top_p=top_p,
-            user=user,
-        )
-        if params.get("stream", False):
-            return self._stream_openai_chat_completion(params)
-        return await self._get_openai_client().chat.completions.create(**params)  # type: ignore
+        raise NotImplementedError("openai chat completion is not supported for watsonx")
 
-    async def _stream_openai_chat_completion(self, params: dict) -> AsyncGenerator:
-        # watsonx.ai sometimes adds usage data to the stream
-        include_usage = False
-        if params.get("stream_options", None):
-            include_usage = params["stream_options"].get("include_usage", False)
-        stream = await self._get_openai_client().chat.completions.create(**params)
-
-        seen_finish_reason = False
-        async for chunk in stream:
-            # Final usage chunk with no choices that the user didn't request, so discard
-            if not include_usage and seen_finish_reason and len(chunk.choices) == 0:
-                break
-            yield chunk
-            for choice in chunk.choices:
-                if choice.finish_reason:
-                    seen_finish_reason = True
-                    break
