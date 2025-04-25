@@ -5,10 +5,10 @@
 # the root directory of this source tree.
 
 from typing import Any, AsyncGenerator, AsyncIterator, Dict, List, Optional, Union
-from openai import AsyncOpenAI
 
 from ibm_watson_machine_learning.foundation_models import Model
 from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenParams
+from openai import AsyncOpenAI
 
 from llama_stack.apis.common.content_types import InterleavedContent, InterleavedContentItem
 from llama_stack.apis.inference import (
@@ -35,17 +35,11 @@ from llama_stack.apis.inference.inference import (
     OpenAIMessageParam,
     OpenAIResponseFormatParam,
 )
-from llama_stack.providers.utils.inference.openai_compat import (
-    prepare_openai_completion_params,
-    process_chat_completion_response,
-    process_chat_completion_stream_response,
-    process_completion_response,
-    process_completion_stream_response,
-)
 from llama_stack.providers.utils.inference.model_registry import ModelRegistryHelper
 from llama_stack.providers.utils.inference.openai_compat import (
     OpenAICompatCompletionChoice,
     OpenAICompatCompletionResponse,
+    prepare_openai_completion_params,
     process_chat_completion_response,
     process_chat_completion_stream_response,
     process_completion_response,
@@ -109,7 +103,7 @@ class WatsonXInferenceAdapter(Inference, ModelRegistryHelper):
         credentials = {"url": config_url, "apikey": config_api_key}
 
         return Model(model_id=model_id, credentials=credentials, project_id=project_id)
-    
+
     def _get_openai_client(self) -> AsyncOpenAI:
         if not self._openai_client:
             self._openai_client = AsyncOpenAI(
