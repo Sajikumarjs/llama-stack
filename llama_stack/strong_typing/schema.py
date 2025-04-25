@@ -417,6 +417,7 @@ class JsonSchemaGenerator:
             (list_type,) = typing.get_args(typ)  # unpack single tuple element
             return {"type": "array", "items": self.type_to_schema(list_type)}
         elif origin_type is dict:
+            print("=====================")
             print(typ)
             key_type, value_type = typing.get_args(typ)
             if not (key_type is str or key_type is int or is_type_enum(key_type)):
